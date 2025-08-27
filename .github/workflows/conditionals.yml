@@ -1,0 +1,133 @@
+name: Conditionals
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+
+permissions:
+  contents: read
+
+jobs:
+  info:
+    uses: ./.github/workflows/info.yml
+
+  alpha-when-success:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "expected: green or cancel"
+          sleep 30
+
+  alpha-when-failure:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "expected: red"
+          exit 1
+
+  beta-when-true:
+    needs: alpha-when-success
+    if: true
+    runs-on: ubuntu-latest
+    steps:
+      - run: "echo 'expected: green'"
+
+  beta-when-false:
+    needs: alpha-when-success
+    if: false
+    runs-on: ubuntu-latest
+    steps:
+      - run: "echo 'expected: no run'"
+
+  gamma-when-alpha-success-beta-false:
+    needs:
+      - alpha-when-success
+      - beta-when-false
+    runs-on: ubuntu-latest
+    steps:
+      - run: "echo 'expected: no run'"
+
+  gamma-when-alpha-failure-beta-false-with-condition-always:
+    needs:
+      - alpha-when-failure
+      - beta-when-false
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - run: "echo 'expected: green'"
+
+  gamma-when-alpha-success-beta-false-with-condition-not_cancelled:
+    needs:
+      - alpha-when-success
+      - beta-when-false
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: "echo 'expected: green'"
+
+  gamma-when-alpha-success-beta-false-with-condition-alpha_success:
+    needs:
+      - alpha-when-success
+      - beta-when-false
+    if: needs.alpha-when-success.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - run: "echo 'expected: no run"
+
+  gamma-when-alpha-success-beta-false-overriding-status-check-with-condition-alpha_success:
+    needs:
+      - alpha-when-success
+      - beta-when-false
+    if: needs.alpha-when-success.result == 'success' && !cancelled()
+    runs-on: ubuntu-latest
+    steps:
+      - run: "echo 'expected: green'"
+
+  gamma-when-alpha-failure-beta-false-overriding-status-check-with-condition-alpha_success:
+    needs:
+      - alpha-when-failure
+      - beta-when-false
+    if: needs.alpha-when-failure.result == 'success' && !cancelled()
+    runs-on: ubuntu-latest
+    steps:
+      - run: "echo 'expected: no run'"
+
+  ##########
+  # When cancelled
+
+  gamma-when-alpha-cancelled-beta-true:
+    needs:
+      - alpha-when-success
+      - beta-when-true
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - run: "echo 'expected: green'"
+
+  gamma-when-alpha-cancelled-beta-false-with-condition-always:
+    needs:
+      - alpha-when-success
+      - beta-when-false
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - run: "echo 'expected: green'"
+
+  gamma-when-alpha-cancelled-beta-false-with-condition-not_cancelled:
+    needs:
+      - alpha-when-success
+      - beta-when-false
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: "echo 'expected: no run'"
+
+  delta-runs-only-when-cancelled:
+    needs:
+      - alpha-when-success
+    if: ${{ cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: "echo 'expected: green'"

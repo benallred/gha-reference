@@ -2,9 +2,7 @@ name: Context info
 
 on:
   workflow_dispatch:
-
-concurrency:
-  group: ${{ github.workflow }}
+  workflow_call:
 
 jobs:
   info:
