@@ -1,0 +1,35 @@
+name: Context info
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+
+jobs:
+  info:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Context
+        env:
+          InputsContext: ${{ toJSON(inputs) }}
+          EnvContext: ${{ toJSON(env) }}
+          VarsContext: ${{ toJSON(vars) }}
+          GitHubContext: ${{ toJSON(github) }}
+          RunnerContext: ${{ toJSON(runner) }}
+        run: |
+          echo "::group::Context: inputs"
+          echo "$InputsContext"
+          echo "::endgroup::"
+          echo "::group::Context: env"
+          echo "$EnvContext"
+          echo "::endgroup::"
+          echo "::group::Context: vars"
+          echo "$VarsContext"
+          echo "::endgroup::"
+          echo "::group::Context: github"
+          echo "$GitHubContext"
+          echo "::endgroup::"
+          echo "::group::Context: runner"
+          echo "$RunnerContext"
+          echo "::endgroup::"
