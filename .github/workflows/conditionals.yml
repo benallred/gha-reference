@@ -10,8 +10,8 @@ permissions:
   contents: read
 
 jobs:
-  info:
-    uses: ./.github/workflows/info.yml
+  context-info:
+    uses: ./.github/workflows/context-info.yml
 
   alpha-when-success:
     runs-on: ubuntu-latest

@@ -5,10 +5,10 @@ on:
   workflow_call:
 
 jobs:
-  info:
+  context-info:
     runs-on: ubuntu-latest
     steps:
-      - name: Context
+      - name: Context info
         env:
           InputsContext: ${{ toJSON(inputs) }}
           EnvContext: ${{ toJSON(env) }}
