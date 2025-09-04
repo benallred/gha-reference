@@ -1,0 +1,15 @@
+name: Composite action
+
+description: Some description for a composite action
+
+inputs:
+  some-argument:
+    description: Some argument description
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Some step
+      shell: bash
+      run: "echo 'some-argument: ${{ inputs.some-argument }}'"

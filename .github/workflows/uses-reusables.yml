@@ -1,0 +1,23 @@
+name: Uses reusables
+
+on:
+  workflow_dispatch:
+
+jobs:
+  context-info:
+    uses: ./.github/workflows/context-info.yml
+
+  parent-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Parent step
+        run: echo "This is the parent step"
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/reusable-action
+        with:
+          some-argument: some value
+
+  parent-job-with-using:
+    uses: ./.github/workflows/reusable-workflow.yml
+    with:
+      some-argument: some value

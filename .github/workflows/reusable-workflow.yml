@@ -1,0 +1,17 @@
+name: Reusable workflow
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      some-argument:
+        description: Some argument description
+        type: string
+        required: true
+
+jobs:
+  some-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Some step
+        run: "echo 'some-argument: ${{ inputs.some-argument }}'"
