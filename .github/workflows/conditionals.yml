@@ -94,6 +94,30 @@ jobs:
     steps:
       - run: "echo 'expected: no run'"
 
+  delta-when-all-needs-success:
+    needs:
+      - alpha-when-success
+      - beta-when-true
+    if: >
+      !cancelled() &&
+      !contains(needs.*.result, 'failure') &&
+      !contains(needs.*.result, 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - run: "echo 'expected: green'"
+
+  delta-when-a-need-not-success:
+    needs:
+      - alpha-when-success
+      - beta-when-false
+    if: >
+      !cancelled() &&
+      !contains(needs.*.result, 'failure') &&
+      !contains(needs.*.result, 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - run: "echo 'expected: no run'"
+
   ##########
   # When cancelled
 
